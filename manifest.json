@@ -1,0 +1,16 @@
+{
+  "name": "Стыковка — планер расписания",
+  "short_name": "Стыковка",
+  "description": "Интерактивное расписание СПбГУ с проверкой конфликтов и своими делами",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eaedee",
+  "theme_color": "#1f3f59",
+  "lang": "ru",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
