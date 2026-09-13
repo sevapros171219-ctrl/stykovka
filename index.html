@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Стыковка</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
@@ -99,7 +104,6 @@
     padding-bottom:96px;
     position:relative;
     overscroll-behavior-y:contain;
-  }
   }
   h1,h2,h3{font-family:"PT Serif",Georgia,serif; text-wrap:balance; margin:0;}
   .topbar{
@@ -305,12 +309,79 @@
   .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px);}
 
   @media (prefers-reduced-motion:reduce){ *{transition:none !important;} }
-</style>
 
-<div class="app">
+  .onboarding-wrap{
+    position:fixed; inset:0; background:var(--bg); z-index:100;
+    display:flex; align-items:center; justify-content:center; padding:24px;
+    overflow-y:auto;
+  }
+  .onboarding-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:26px 22px; max-width:420px; width:100%; box-shadow:var(--shadow);
+  }
+  .onboarding-card h2{font-size:1.32rem; margin-bottom:6px;}
+  .onboarding-card .sub{color:var(--ink-muted); font-size:.86rem; margin-bottom:20px; line-height:1.5;}
+
+  .brand-btn{
+    display:flex; align-items:center; gap:10px; background:none; border:none; padding:0;
+    cursor:pointer; color:inherit; text-align:left; font:inherit;
+  }
+  .avatar{
+    width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.16);
+    border:1px solid rgba(255,255,255,.32); display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:.86rem; flex:none; font-family:"PT Serif",Georgia,serif;
+  }
+  .brand-text b{display:block; font-family:"PT Serif",Georgia,serif; font-size:1.22rem; font-weight:700; line-height:1.1;}
+  .brand-text small{display:block; font-size:.7rem; letter-spacing:.05em; text-transform:uppercase; opacity:.72; margin-top:2px;}
+
+  .month-nav{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
+  .month-nav button{background:var(--surface-2); border:1px solid var(--border); border-radius:8px; width:32px; height:32px; cursor:pointer; font-size:1rem; color:var(--ink);}
+  .month-nav .mlabel{font-family:"PT Serif",Georgia,serif; font-weight:700; font-size:1.08rem;}
+
+  .stat-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px;}
+  .stat-tile{background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:12px;}
+  .stat-tile .num{font-family:"JetBrains Mono",monospace; font-size:1.5rem; font-weight:700; font-variant-numeric:tabular-nums;}
+  .stat-tile .lbl{font-size:.7rem; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.04em; margin-top:2px;}
+  .stat-tile.done .num{color:var(--success);}
+  .stat-tile.skip .num{color:var(--danger);}
+  .stat-tile.unmarked .num{color:var(--amber);}
+
+  .pct-bar-wrap{margin-bottom:18px;}
+  .pct-bar{height:10px; border-radius:6px; background:var(--surface-2); overflow:hidden; display:flex;}
+  .pct-bar .seg{height:100%;}
+  .pct-bar .seg.done{background:var(--success);}
+  .pct-bar .seg.skip{background:var(--danger);}
+  .pct-label{display:flex; justify-content:space-between; font-size:.78rem; color:var(--ink-muted); margin-top:6px;}
+
+  .subject-row{border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-bottom:8px; background:var(--surface);}
+  .subject-row .sname{font-weight:700; font-size:.88rem; margin-bottom:5px;}
+  .subject-row .smeta{display:flex; gap:11px; font-size:.76rem; color:var(--ink-muted); flex-wrap:wrap;}
+  .subject-row .smeta b{color:var(--ink);}
+  .subject-row .spct{float:right; font-family:"JetBrains Mono",monospace; font-weight:700; color:var(--accent);}
+</style>
+</head>
+<body>
+
+
+<div id="onboarding" class="onboarding-wrap" hidden>
+  <div class="onboarding-card">
+    <h2>Твой профиль</h2>
+    <div class="sub">Заполни один раз — так у каждого, кто откроет эту ссылку, будет своё расписание и своя статистика, а не чужие данные.</div>
+    <div class="field"><label for="pFirst">Имя</label><input id="pFirst" placeholder="Всеволод"><span class="hint" id="pFirstErr" style="color:var(--danger); display:none;">Введи имя — это единственное обязательное поле.</span></div>
+    <div class="field"><label for="pLast">Фамилия (необязательно)</label><input id="pLast" placeholder=""></div>
+    <div class="field"><label for="pCourse">Курс</label><input id="pCourse" placeholder="3 курс"></div>
+    <div class="field"><label for="pFaculty">Факультет / программа</label><input id="pFaculty" placeholder="Политология, 24.Б03-пл"></div>
+    <button class="btn btn-primary" id="pCreate">Создать профиль</button>
+  </div>
+</div>
+
+<div class="app" id="appRoot" hidden>
   <div class="topbar">
     <div class="topbar-row">
-      <div class="brand">Стыковка<small>Расписание · Политология, 24.Б03‑пл</small></div>
+      <button class="brand-btn" id="profileBtn" aria-label="Моя посещаемость" title="Моя посещаемость">
+        <span class="avatar" id="avatarInitials"></span>
+        <span class="brand-text"><b>Стыковка</b><small id="profileLine">Расписание</small></span>
+      </button>
       <button class="icon-btn" id="importBtn" aria-label="Импорт и настройки" title="Импорт и настройки">⇅</button>
     </div>
     <div class="week-nav">
@@ -337,9 +408,22 @@
 <script>
 (function(){
   "use strict";
-  var LS_EVENTS = "stykovka.events.v1";
-  var LS_TASKS  = "stykovka.tasks.v1";
-  var LS_META   = "stykovka.meta.v1";
+  window.addEventListener('error', function(ev){
+    try{
+      var box = document.getElementById('jsErrorBox');
+      if(!box){
+        box = document.createElement('div');
+        box.id = 'jsErrorBox';
+        box.style.cssText = 'position:fixed;left:0;right:0;top:0;z-index:9999;background:#a9463c;color:#fff;padding:10px 14px;font:600 12px monospace;white-space:pre-wrap;';
+        document.body.appendChild(box);
+      }
+      box.textContent = 'Ошибка в приложении: ' + (ev.message||'') + ' (стр. ' + (ev.lineno||'?') + ')';
+    }catch(e){}
+  });
+  var LS_EVENTS  = "stykovka.events.v1";
+  var LS_TASKS   = "stykovka.tasks.v1";
+  var LS_META    = "stykovka.meta.v1";
+  var LS_PROFILE = "stykovka.profile.v1";
 
   var MONTHS = {'января':0,'февраля':1,'марта':2,'апреля':3,'мая':4,'июня':5,'июля':6,'августа':7,'сентября':8,'октября':9,'ноября':10,'декабря':11};
   var DOW = ['вс','пн','вт','ср','чт','пт','сб'];
@@ -415,6 +499,7 @@
   var events = [];
   var tasks = [];
   var meta = {lastImport:null};
+  var profile = null;
   var selectedDate = toISO(new Date());
   var weekMonday = mondayOf(new Date());
 
@@ -422,37 +507,44 @@
     try{ events = JSON.parse(localStorage.getItem(LS_EVENTS) || 'null') || null; }catch(e){ events = null; }
     try{ tasks = JSON.parse(localStorage.getItem(LS_TASKS) || 'null') || []; }catch(e){ tasks = []; }
     try{ meta = JSON.parse(localStorage.getItem(LS_META) || 'null') || {lastImport:null}; }catch(e){ meta = {lastImport:null}; }
-    if(events===null){ events = seedEvents(); saveEvents(); }
+    try{ profile = JSON.parse(localStorage.getItem(LS_PROFILE) || 'null') || null; }catch(e){ profile = null; }
+    if(events===null){ events = []; saveEvents(); }
   }
   function saveEvents(){ try{ localStorage.setItem(LS_EVENTS, JSON.stringify(events)); }catch(e){} }
   function saveTasks(){ try{ localStorage.setItem(LS_TASKS, JSON.stringify(tasks)); }catch(e){} }
   function saveMeta(){ try{ localStorage.setItem(LS_META, JSON.stringify(meta)); }catch(e){} }
+  function saveProfile(){ try{ localStorage.setItem(LS_PROFILE, JSON.stringify(profile)); }catch(e){} }
 
-  function seedEvents(){
-    var raw = [
-      ["2026-09-07","13:40","15:10","Политические системы стран и регионов мира","лекция","Смольный проезд, д. 1, лит. Б (подъезд №7), 216","Ачкасов В. А."],
-      ["2026-09-07","15:20","16:50","Политическая конфликтология","лекция","Смольный проезд, д. 1, лит. Б (подъезд №7), 217","Никифоров А. А."],
-      ["2026-09-07","17:00","18:30","Сетевой подход в политике и государственном управлении","лекция","Смольный проезд, д. 1, лит. Б (подъезд №7), 217","Игнатьева О. А."],
-      ["2026-09-07","18:40","20:10","Гражданин, гражданство и государственность","лекция","Смольный проезд, д. 1, лит. Б (подъезд №7), 216","Белоус В. Г."],
-      ["2026-09-08","09:30","11:00","Учебная практика (основы научно-исследовательской работы)","лекция","Смольный проезд, д. 1, лит. Б (подъезд №7), 217","Полякова Н. В."],
-      ["2026-09-09","13:40","15:10","Политическая социология","семинар","Смольный проезд, д. 1, лит. Б (подъезд №7), 308-310","Мартьянов Д. С."],
-      ["2026-09-09","15:20","16:50","Политическая философия","лекция","Смольный проезд, д. 1, лит. Б (подъезд №7), 217","Корюшкин А. И."],
-      ["2026-09-09","17:00","18:30","Государственная политика и управление","лекция","Смольный проезд, д. 1, лит. Б (подъезд №7), 216","Игнатьева О. А."],
-      ["2026-09-09","18:40","20:10","Политическая философия","семинар","Смольный проезд, д. 1, лит. Б (подъезд №7), 210","Корюшкин А. И."],
-      ["2026-09-10","10:00","11:30","Безопасность жизнедеятельности","лекция","Средний пр. В.О., д. 41, лит. А, 501","Масликов А. А."],
-      ["2026-09-10","11:40","13:10","Безопасность жизнедеятельности","лекция","Средний пр. В.О., д. 41, лит. А, 501","Масликов А. А."],
-      ["2026-09-10","14:00","15:30","Безопасность жизнедеятельности","лекция","Средний пр. В.О., д. 41, лит. А, 501","Масликов А. А."],
-      ["2026-09-11","11:10","12:40","Электив. Английский язык в политике и международных отношениях (на английском языке)","практическое занятие","Смольный проезд, д. 1, лит. Б (подъезд №7), 213","Корочкина В. А."],
-      ["2026-09-11","13:40","15:10","Электив. Английский язык в политике и международных отношениях (на английском языке)","практическое занятие","Смольный проезд, д. 1, лит. Б (подъезд №7), 213","Корочкина В. А."],
-      ["2026-09-11","13:40","15:10","Электив. Расизм и ксенофобия в современном мире (на английском языке)","лекция","Смольный проезд, д. 1, лит. Б (подъезд №7), 308-310","Грибанова Г. И."],
-      ["2026-09-11","15:20","16:50","Государственная политика и управление","семинар","Смольный проезд, д. 1, лит. Б (подъезд №7), 213","Неверов К. А."],
-      ["2026-09-11","17:00","18:30","Политическая социология","лекция","Смольный проезд, д. 1, лит. Б (подъезд №7), 216","Мартьянов Д. С."]
-    ];
-    return raw.map(function(r){
-      var e = {date:r[0], start:r[1], end:r[2], subject:r[3], kind:r[4], location:r[5], teacher:r[6], status:'plan'};
-      e.id = eventId(e);
-      return e;
+  function resetAllData(){
+    try{ localStorage.removeItem(LS_EVENTS); }catch(e){}
+    try{ localStorage.removeItem(LS_TASKS); }catch(e){}
+    try{ localStorage.removeItem(LS_META); }catch(e){}
+    try{ localStorage.removeItem(LS_PROFILE); }catch(e){}
+    events = [];
+    tasks = [];
+    meta = {lastImport:null};
+    profile = null;
+    ['pFirst','pLast','pCourse','pFaculty'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.value = '';
     });
+    document.getElementById('appRoot').hidden = true;
+    document.getElementById('onboarding').hidden = false;
+    toast('Профиль и всё расписание удалены');
+  }
+
+  function initials(p){
+    var a = (p.firstName||'').trim().charAt(0);
+    var b = (p.lastName||'').trim().charAt(0);
+    return (a+b).toUpperCase() || '?';
+  }
+  function updateBrandLine(){
+    if(!profile) return;
+    document.getElementById('avatarInitials').textContent = initials(profile);
+    var bits = [];
+    if(profile.course) bits.push(profile.course);
+    if(profile.faculty) bits.push(profile.faculty);
+    document.getElementById('profileLine').textContent = bits.length ? bits.join(' · ') : 'Моя посещаемость';
   }
 
   // ---------- merge import ----------
@@ -941,6 +1033,190 @@
   }
   importBtn.addEventListener('click', openImportSheet);
 
+  // ================= PROFILE / ATTENDANCE =================
+  var monthNames = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+
+  function computeMonthStats(monthKey){
+    var todayISO = toISO(new Date());
+    var evs = events.filter(function(e){ return e.date.slice(0,7)===monthKey && e.status!=='cancelled'; });
+    var done=0, skip=0, unmarkedPast=0, upcoming=0;
+    var bySubject = {};
+    evs.forEach(function(e){
+      if(!bySubject[e.subject]) bySubject[e.subject] = {subject:e.subject, total:0, done:0, skip:0, unmarkedPast:0, upcoming:0};
+      var s = bySubject[e.subject];
+      s.total++;
+      if(e.status==='done'){ done++; s.done++; }
+      else if(e.status==='skip'){ skip++; s.skip++; }
+      else if(e.date<=todayISO){ unmarkedPast++; s.unmarkedPast++; }
+      else { upcoming++; s.upcoming++; }
+    });
+    var subjects = Object.keys(bySubject).map(function(k){return bySubject[k];}).sort(function(a,b){return b.total-a.total;});
+    var pct = (done+skip)>0 ? Math.round(100*done/(done+skip)) : null;
+    return {total:evs.length, done:done, skip:skip, unmarkedPast:unmarkedPast, upcoming:upcoming, pct:pct, subjects:subjects};
+  }
+
+  // Custom in-app confirmation (native confirm()/alert() can be silently
+  // blocked inside a sandboxed preview iframe, so we never rely on them).
+  function openConfirmSheet(message, confirmLabel, onConfirm){
+    var backdrop = document.createElement('div');
+    backdrop.className='sheet-backdrop';
+    backdrop.innerHTML =
+      '<div class="sheet">'+
+        '<h3>Точно?</h3>'+
+        '<div class="sub">'+escapeHtml(message)+'</div>'+
+        '<div class="btn-row">'+
+          '<button class="btn btn-ghost" id="cfNo">Отмена</button>'+
+          '<button class="btn btn-primary" id="cfYes" style="background:var(--danger);">'+escapeHtml(confirmLabel)+'</button>'+
+        '</div>'+
+      '</div>';
+    document.body.appendChild(backdrop);
+    backdrop.addEventListener('click', function(ev){ if(ev.target===backdrop) document.body.removeChild(backdrop); });
+    backdrop.querySelector('#cfNo').addEventListener('click', function(){ document.body.removeChild(backdrop); });
+    backdrop.querySelector('#cfYes').addEventListener('click', function(){
+      document.body.removeChild(backdrop);
+      onConfirm();
+    });
+  }
+
+  function openProfileForm(existing, onSave){
+    var backdrop = document.createElement('div');
+    backdrop.className='sheet-backdrop';
+    backdrop.innerHTML =
+      '<div class="sheet">'+
+        '<h3>'+(existing?'Изменить профиль':'Твой профиль')+'</h3>'+
+        (existing?'':'<div class="sub">Заполни один раз — так у каждого, кто откроет эту ссылку, будет своё расписание и своя статистика, а не чужие данные.</div>')+
+        '<div class="field"><label for="epFirst">Имя</label><input id="epFirst" placeholder="Всеволод" value="'+escapeHtml(existing?existing.firstName:'')+'"><span class="hint" id="epFirstErr" style="color:var(--danger); display:none;">Введи имя — это единственное обязательное поле.</span></div>'+
+        '<div class="field"><label for="epLast">Фамилия (необязательно)</label><input id="epLast" placeholder="" value="'+escapeHtml(existing?existing.lastName:'')+'"></div>'+
+        '<div class="field"><label for="epCourse">Курс</label><input id="epCourse" placeholder="3 курс" value="'+escapeHtml(existing?existing.course:'')+'"></div>'+
+        '<div class="field"><label for="epFaculty">Факультет / программа</label><input id="epFaculty" placeholder="Политология, 24.Б03-пл" value="'+escapeHtml(existing?existing.faculty:'')+'"></div>'+
+        '<div class="btn-row">'+
+          (existing?'<button class="btn btn-ghost" id="epCancel">Отмена</button>':'')+
+          '<button class="btn btn-primary" id="epSave">Сохранить</button>'+
+        '</div>'+
+        (existing?'<button class="btn btn-ghost" id="epDelete" style="color:var(--danger);border-color:var(--danger);margin-top:10px;">Удалить профиль и всё расписание</button>':'')+
+      '</div>';
+    document.body.appendChild(backdrop);
+    if(existing){ backdrop.addEventListener('click', function(ev){ if(ev.target===backdrop) document.body.removeChild(backdrop); }); }
+    var cancelBtn = backdrop.querySelector('#epCancel');
+    if(cancelBtn) cancelBtn.addEventListener('click', function(){ document.body.removeChild(backdrop); });
+    var deleteBtn = backdrop.querySelector('#epDelete');
+    if(deleteBtn){
+      deleteBtn.addEventListener('click', function(){
+        openConfirmSheet('Профиль, всё расписание и все дела будут удалены без возможности восстановления.', 'Удалить всё', function(){
+          document.body.removeChild(backdrop);
+          resetAllData();
+        });
+      });
+    }
+    backdrop.querySelector('#epSave').addEventListener('click', function(){
+      var firstInput = backdrop.querySelector('#epFirst');
+      var firstName = firstInput.value.trim();
+      var err = backdrop.querySelector('#epFirstErr');
+      if(!firstName){
+        firstInput.focus();
+        firstInput.style.borderColor = 'var(--danger)';
+        if(err) err.style.display = 'block';
+        return;
+      }
+      var p = {
+        firstName: firstName,
+        lastName: backdrop.querySelector('#epLast').value.trim(),
+        course: backdrop.querySelector('#epCourse').value.trim(),
+        faculty: backdrop.querySelector('#epFaculty').value.trim()
+      };
+      document.body.removeChild(backdrop);
+      onSave(p);
+    });
+  }
+
+  function openAttendanceSheet(){
+    var monthKey = toISO(new Date()).slice(0,7);
+    var backdrop = document.createElement('div');
+    backdrop.className='sheet-backdrop';
+    backdrop.innerHTML =
+      '<div class="sheet">'+
+        '<h3>Моя посещаемость</h3>'+
+        '<div class="sub" id="attProfileLine"></div>'+
+        '<div class="month-nav">'+
+          '<button type="button" id="attPrev" aria-label="Предыдущий месяц">‹</button>'+
+          '<span class="mlabel" id="attMonthLabel"></span>'+
+          '<button type="button" id="attNext" aria-label="Следующий месяц">›</button>'+
+        '</div>'+
+        '<div id="attBody"></div>'+
+        '<div class="btn-row">'+
+          '<button class="btn btn-ghost" id="attEditProfile">Изменить профиль</button>'+
+          '<button class="btn btn-ghost" id="attClose">Закрыть</button>'+
+        '</div>'+
+      '</div>';
+    document.body.appendChild(backdrop);
+    backdrop.addEventListener('click', function(ev){ if(ev.target===backdrop) document.body.removeChild(backdrop); });
+    backdrop.querySelector('#attClose').addEventListener('click', function(){ document.body.removeChild(backdrop); });
+    backdrop.querySelector('#attEditProfile').addEventListener('click', function(){
+      document.body.removeChild(backdrop);
+      openProfileForm(profile, function(p){ profile=p; saveProfile(); updateBrandLine(); openAttendanceSheet(); });
+    });
+
+    function render(){
+      var bits = [];
+      if(profile){
+        var name = (profile.firstName||'')+(profile.lastName?' '+profile.lastName:'');
+        bits.push(name);
+        if(profile.course) bits.push(profile.course);
+        if(profile.faculty) bits.push(profile.faculty);
+      }
+      backdrop.querySelector('#attProfileLine').textContent = bits.join(' · ');
+      backdrop.querySelector('#attMonthLabel').textContent = monthNames[+monthKey.slice(5,7)-1]+' '+monthKey.slice(0,4);
+
+      var st = computeMonthStats(monthKey);
+      var body = backdrop.querySelector('#attBody');
+      var html = '';
+      html += '<div class="stat-grid">'+
+        '<div class="stat-tile"><div class="num">'+st.total+'</div><div class="lbl">Всего пар</div></div>'+
+        '<div class="stat-tile done"><div class="num">'+st.done+'</div><div class="lbl">Посещено</div></div>'+
+        '<div class="stat-tile skip"><div class="num">'+st.skip+'</div><div class="lbl">Пропущено</div></div>'+
+        '<div class="stat-tile unmarked"><div class="num">'+st.unmarkedPast+'</div><div class="lbl">Не отмечено</div></div>'+
+      '</div>';
+      if(st.pct!==null){
+        html += '<div class="pct-bar-wrap"><div class="pct-bar">'+
+          '<div class="seg done" style="width:'+(100*st.done/(st.done+st.skip))+'%"></div>'+
+          '<div class="seg skip" style="width:'+(100*st.skip/(st.done+st.skip))+'%"></div>'+
+        '</div><div class="pct-label"><span>Посещаемость</span><b>'+st.pct+'%</b></div></div>';
+      } else {
+        html += '<div class="hint" style="margin-bottom:16px;">Отметок «Иду/Был/Пропуск» в этом месяце пока нет — процент посчитается, когда появятся.</div>';
+      }
+      if(st.upcoming>0){
+        html += '<div class="hint" style="margin-bottom:14px;">Ещё впереди в этом месяце: '+st.upcoming+'.</div>';
+      }
+      if(st.subjects.length){
+        html += '<h4 style="font-family:Manrope,sans-serif;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-muted);margin-bottom:8px;">По предметам</h4>';
+        st.subjects.forEach(function(s){
+          var subPct = (s.done+s.skip)>0 ? Math.round(100*s.done/(s.done+s.skip)) : null;
+          html += '<div class="subject-row">'+
+            (subPct!==null? '<span class="spct">'+subPct+'%</span>':'')+
+            '<div class="sname">'+escapeHtml(s.subject)+'</div>'+
+            '<div class="smeta"><span>Всего: <b>'+s.total+'</b></span><span>Посещено: <b>'+s.done+'</b></span><span>Пропущено: <b>'+s.skip+'</b></span>'+
+            (s.unmarkedPast?'<span>Не отмечено: <b>'+s.unmarkedPast+'</b></span>':'')+
+            '</div>'+
+          '</div>';
+        });
+      } else {
+        html += '<div class="empty-day">В этом месяце пока нет пар в расписании.</div>';
+      }
+      body.innerHTML = html;
+    }
+    backdrop.querySelector('#attPrev').addEventListener('click', function(){
+      var d = fromISO(monthKey+'-01'); d.setMonth(d.getMonth()-1);
+      monthKey = toISO(d).slice(0,7); render();
+    });
+    backdrop.querySelector('#attNext').addEventListener('click', function(){
+      var d = fromISO(monthKey+'-01'); d.setMonth(d.getMonth()+1);
+      monthKey = toISO(d).slice(0,7); render();
+    });
+    render();
+  }
+
+  document.getElementById('profileBtn').addEventListener('click', openAttendanceSheet);
+
   // ================= hash-based auto import (from bookmarklet) =================
   function handleHashImport(){
     if(location.hash.indexOf('#import=')===0){
@@ -956,15 +1232,63 @@
   // ---------- PWA install support ----------
   if('serviceWorker' in navigator){
     window.addEventListener('load', function(){
-      navigator.serviceWorker.register('sw.js').catch(function(){});
+      navigator.serviceWorker.register('sw.js').then(function(reg){
+        reg.update();
+      }).catch(function(){});
+    });
+    var swRefreshed = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function(){
+      if(swRefreshed) return;
+      swRefreshed = true;
+      location.reload();
     });
   }
 
   // ---------- boot ----------
   loadState();
   weekMonday = mondayOf(fromISO(selectedDate));
-  renderAll();
-  handleHashImport();
-  if(location.hash.indexOf('#import=')===0){ renderAll(); }
+
+  function startApp(){
+    document.getElementById('onboarding').hidden = true;
+    document.getElementById('appRoot').hidden = false;
+    updateBrandLine();
+    renderAll();
+    handleHashImport();
+    if(location.hash.indexOf('#import=')===0){ renderAll(); }
+  }
+
+  // Always wire up the onboarding "create profile" button, regardless of
+  // whether a profile already exists at boot — resetAllData() can bring the
+  // onboarding screen back later in the same session, and that button needs
+  // to work then too.
+  document.getElementById('pCreate').addEventListener('click', function(){
+    var firstInput = document.getElementById('pFirst');
+    var firstName = firstInput.value.trim();
+    if(!firstName){
+      firstInput.focus();
+      firstInput.style.borderColor = 'var(--danger)';
+      var pErr = document.getElementById('pFirstErr');
+      if(pErr) pErr.style.display = 'block';
+      return;
+    }
+    profile = {
+      firstName: firstName,
+      lastName: document.getElementById('pLast').value.trim(),
+      course: document.getElementById('pCourse').value.trim(),
+      faculty: document.getElementById('pFaculty').value.trim()
+    };
+    saveProfile();
+    startApp();
+  });
+
+  if(!profile){
+    document.getElementById('appRoot').hidden = true;
+    document.getElementById('onboarding').hidden = false;
+  } else {
+    startApp();
+  }
 })();
 </script>
+
+</body>
+</html>
